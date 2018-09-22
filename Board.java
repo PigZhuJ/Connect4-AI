@@ -5,8 +5,6 @@ public class Board
 	private int height;
 	private int width;
 	private ESpaceState[][] data;
-	private boolean PlayerWon = false;
-	private boolean AIWon = false;
 	
 	
 	//Constructor
@@ -32,7 +30,6 @@ public class Board
 	}
 	
 	//Attempts to drop a chip into a given column - returns whether or not it succeeded
-	//TODO check surrounding chips after placement and check for win - set a board state to won
 	public boolean DropChip(ESpaceState ChipType, int column)
 	{
 		/*
@@ -63,7 +60,8 @@ public class Board
 	}
 	
 	//Checks for an 'nToWin' row of chips
-	private ESpaceState CheckWin()
+	//TODO doesn't work in high numbers
+	public ESpaceState CheckWin()
 	{
 	    int[][] directions = {{1,0}, {1,-1}, {1,1}, {0,1}};
 	    for (int[] d : directions) {
@@ -71,8 +69,8 @@ public class Board
 	        int dy = d[1];
 	        for (int x = 0; x < width-1; x++) {
 	            for (int y = 0; y < height-1; y++) {
-	                int lastx = x + 3*dx;
-	                int lasty = y + 3*dy;
+	                int lastx = x + (nToWin-1)*dx;
+	                int lasty = y + (nToWin-1)*dy;
 	                if (0 <= lastx && lastx < width-1 && 0 <= lasty && lasty < height-1) {
 	                    ESpaceState e = data[x][y];
 	                    if (e != ESpaceState.Empty && e == data[x+dx][y+dy] 

@@ -5,8 +5,9 @@ public class GameIO
 	{
 		ESpaceState[][] data = board.getData();
 		
-		System.out.println("\n");
+		System.out.println("");
 		System.out.print(" ");
+		
 		//Print top row
 		for(int w = 0; w < board.getWidth(); w++)
 		{
@@ -37,11 +38,12 @@ public class GameIO
 		}
 		
 		//Print bottom row
-
 		System.out.print(" ");
 		for(int i = 0; i < board.getWidth(); i++)
 		{
 			System.out.print(" "+ i);
 		}
+		
+		System.out.println("\n");
 	}
 }
