@@ -85,6 +85,15 @@ public class Board
 	    return ESpaceState.Empty;
 	}
 	
+	public boolean canPlayColumn(int n)
+	{
+		if(n > 0 && n < width-1 && data[0][n] == ESpaceState.Empty)
+		{
+			return true;
+		}
+		return false;
+	}
+	
 	//Returns data of board
 	public ESpaceState[][] getData()
 	{

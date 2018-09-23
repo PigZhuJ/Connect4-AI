@@ -35,7 +35,7 @@ public class GameMaster
 			}
 		}
 		
-		AI ai = new AI();
+		IAI ai = new AI_Minimax();
 		
 		boolean playerTurn = true;
 		
@@ -73,7 +73,7 @@ public class GameMaster
 			//AI Turn
 			//TODO log error if AI tries to play on full column.
 			{
-				board.DropChip(ESpaceState.X, ai.DecideTurn(board));
+				board.DropChip(ESpaceState.X, ai.decideTurn(board));
 				GameIO.printBoard(board);
 				playerTurn = true;
 			}
