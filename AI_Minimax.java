@@ -1,61 +1,74 @@
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Stack;
 
 public class AI_Minimax implements IAI
 {
 	public int decideTurn(Board board)
 	{
-		generateTree(board);
-		return 1;
+		return mm(board);
 	}
 	
-	
-	private StateTree generateTree(Board board)
+	public static int mm(Board b)
 	{
-		StateTree tree = new StateTree(board, 0);
+		Stack<Integer> pActions = b.possibleActions();
+		int utility = -100;
+		int move = 0;
 		
-		//First, generate the tree
-		PriorityQueue<StateTree> sQueue = new PriorityQueue<StateTree>();
-		sQueue.add(tree);
-		
-		int endings = 0;
-		//Generate and explore all children
-		//(This loop stops when all terminal)
-		while(!sQueue.isEmpty())
+		while(!pActions.isEmpty())
 		{
-			StateTree current = sQueue.poll();
-			
-			//Check if state is terminal
-			if (!current.isTerminal()) {
-				
-				//For each column I can drop a piece
-				for (int i = 0; i < board.getWidth() - 1; i++) {
-					
-					//Check if that column is playable
-					//If depth is even, it's our turn, if it's odd, it's the player's turn
-					if (current.getBoard().canPlayColumn(i)) {
-						endings++;
-						StateTree newChild = new StateTree(current.getBoard(), current.getDepth() + 1);
-
-						//Our turn
-						if (current.getDepth() % 2 == 0) {
-							//Since it's our turn we would drop an X
-							newChild.getBoard().DropChip(ESpaceState.X, i);
-
-							//Player Turn
-						} else {
-							//Since it's our their we would drop an 0
-							newChild.getBoard().DropChip(ESpaceState.O, i);
-
-						}
-						newChild.setParent(current);
-						current.addChild(newChild);
-						sQueue.add(newChild);
-					}
-				} 
+			int i = pActions.pop();
+			Board cb = b.copyBoard();
+			cb = Board.DropChip(cb, i);
+			int val = minV(cb);
+			if(val >= utility)
+			{
+				utility = val;
+				move = i;
 			}
 		}
-		System.out.println("Possible endings: " + endings);
-		return tree;
+		return move;
+	}
+	
+	public static int minV(Board b)
+	{
+		if(b.isTerminal())
+		{
+			return utility(b);
+		}
+		
+		Stack<Integer> pActions = b.possibleActions();
+		int minimum = Integer.MIN_VALUE;
+		while(!pActions.isEmpty())
+		{
+			minimum = Math.min(minimum, maxV(Board.DropChip(b, pActions.pop())));
+		}
+		return minimum;
+	}
+	
+	public static int maxV(Board b)
+	{
+		if(b.isTerminal())
+		{
+			return utility(b);
+		}
+		
+		Stack<Integer> pActions = b.possibleActions();
+		int maximum = Integer.MAX_VALUE;
+		while(!pActions.isEmpty())
+		{
+			maximum = Math.max(maximum, minV(Board.DropChip(b, pActions.pop())));
+		}
+		return maximum;
+	}
+	
+	private static int utility(Board b)
+	{
+		switch (b.CheckWin())
+		{
+		case O : return 100;
+		case X : return -100;
+		default : return 0;
+		}
 	}
 }

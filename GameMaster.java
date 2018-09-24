@@ -36,13 +36,11 @@ public class GameMaster
 		}
 		
 		IAI ai = new AI_Minimax();
-		
-		boolean playerTurn = true;
-		
+				
 		while(board.CheckWin() == ESpaceState.Empty)
 		{
 			GameIO.printBoard(board);
-			if (playerTurn)
+			if (board.isPlayerTurn())
 			{
 				//Ask user for their play
 				System.out.print("Your Move: ");
@@ -57,13 +55,14 @@ public class GameMaster
 					{
 						System.out.println("Please enter a valid column number.");
 					//If board doesn't complain that column is full
-					} else if (!board.DropChip(ESpaceState.O, columnChoice))
+					} else if (!board.canPlayColumn(columnChoice))
 					{
 						System.out.println("That column is full silly!");
 					//Otherwise continue
 					} else
 					{
-						playerTurn = false;
+						board = Board.DropChip(board, columnChoice);
+						board.setPlayerTurn(false);
 					}
 				} catch (NumberFormatException e)
 				{
@@ -71,11 +70,10 @@ public class GameMaster
 				}
 			} else
 			//AI Turn
-			//TODO log error if AI tries to play on full column.
 			{
-				board.DropChip(ESpaceState.X, ai.decideTurn(board));
+				Board.DropChip(board, ai.decideTurn(board));
 				GameIO.printBoard(board);
-				playerTurn = true;
+				board.setPlayerTurn(true);
 			}
 			
 			System.out.println("\n------------------");

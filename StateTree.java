@@ -11,7 +11,7 @@ public class StateTree
 	
 	public StateTree(Board board, int depth)
 	{
-		this.board = board;
+		this.board = new Board(board.getnToWin(), board.getHeight(), board.getWidth(), board.getData());
 		this.depth = depth;
 		this.children = new LinkedList<StateTree>();
 	}
