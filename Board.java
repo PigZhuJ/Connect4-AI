@@ -13,7 +13,7 @@ public class Board
 	//Constructor
 	public Board(int nToWin, int height, int width)
 	{
-		this.playerTurn = true;
+		this.playerTurn = false;
 		this.nToWin = nToWin;
 		this.height = height;
 		this.width = width;
@@ -55,37 +55,40 @@ public class Board
 		//Iterate down the column to find first empty space
 		for(int i = 0; i < b.getHeight(); i++)
 		{
-			//First, handle bottom spot scenario
+			//Handle bottom spot scenario
 			if(i == (b.getHeight()-1))
 			{
 				b.data[i][column] = ChipType;
+				b.setPlayerTurn(!b.playerTurn);
 				return b;
 			//Next, check if the next spot down is filled	
 			} else if (b.data[i+1][column] != ESpaceState.Empty)
 			{
 				b.data[i][column] = ChipType;
+				b.setPlayerTurn(!b.playerTurn);
 				return b;
 			}
 			//If neither conditions are satisfied, the loop searches one spot deeper
 		}
+		b.setPlayerTurn(!b.playerTurn);
 		return b; //<-- Shouldn't be reached
 	}
 	
 	public boolean isTerminal()
 	{
 		//If the board is not already won
-		if(CheckWin() != ESpaceState.Empty) 
+		if(CheckWin() == ESpaceState.Empty) 
 		{
 			//Check that the board isn't full - return nonterminal when we find an empty column
-			for(int i = 0; i < width-1; i++)
+			for(int i = 0; i < width; i++)
 			{
 				if (data[0][i] == ESpaceState.Empty)
 				{
-					return true;
+					return false;
 				}
 			}
 		}
-		return false;
+		return true;
 	}
 	
 	public Stack<Integer> possibleActions()
@@ -101,27 +104,35 @@ public class Board
 		return actions;
 	}
 	
-	public Board copyBoard()
+	public static Board copyBoard(Board b)
 	{
-		Board newB = new Board(getnToWin(), getHeight(), getWidth(), getData());
+		//Loop thru array and copy ints
+		Board newB = new Board(b.getnToWin(),b.getHeight(),b.getWidth());
+		newB.setPlayerTurn(b.getPlayerTurn());
+		for(int h = 0; h < b.getHeight(); h++)
+		{
+			for(int w = 0; w < b.getWidth(); w++)
+			{
+				newB.setDataVal(h, w, b.getData()[h][w]);
+			}
+		}
 		return newB;
 	}
 	
 	//Checks for an 'nToWin' row of chips
-	//TODO doesn't work in high numbers
 	public ESpaceState CheckWin()
 	{
 	    int[][] directions = {{1,0}, {1,-1}, {1,1}, {0,1}};
 	    for (int[] d : directions) 
 	    {
-	        int dx = d[0];
-	        int dy = d[1];
+	        int dx = d[1];
+	        int dy = d[0];
 	        for (int x = 0; x < width; x++) 
 	        {
 	            for (int y = 0; y < height; y++) 
 	            {
 	                //Current 'color' being checked
-	                ESpaceState e = data[x][y];
+	                ESpaceState e = data[y][x];
 	                
 	                if (e != ESpaceState.Empty) {
 						//Loop through derivatives
@@ -133,7 +144,7 @@ public class Board
 							//Not out of bounds
 							if (0 <= xCheck && xCheck < width && 0 <= yCheck && yCheck < height) {
 								//If we find another same piece
-								if (e == data[xCheck][yCheck]) {
+								if (e == data[yCheck][xCheck]) {
 									count++;
 									if (count == nToWin) {
 										return e;
@@ -193,6 +204,16 @@ public class Board
 
 	public void setPlayerTurn(boolean playerTurn) {
 		this.playerTurn = playerTurn;
+	}
+	
+	public boolean getPlayerTurn()
+	{
+		return playerTurn;
+	}
+	
+	public void setDataVal(int h, int w, ESpaceState e)
+	{
+		data[h][w] = e;
 	}
 
 }

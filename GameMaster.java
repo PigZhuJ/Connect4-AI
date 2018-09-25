@@ -33,11 +33,11 @@ public class GameMaster
 			{
 				System.out.println("Please Enter 'A' or 'B' to select a mode.");
 			}
-		}
+		}	
 		
 		IAI ai = new AI_Minimax();
 				
-		while(board.CheckWin() == ESpaceState.Empty)
+		while(!board.isTerminal())
 		{
 			GameIO.printBoard(board);
 			if (board.isPlayerTurn())
@@ -72,7 +72,6 @@ public class GameMaster
 			//AI Turn
 			{
 				Board.DropChip(board, ai.decideTurn(board));
-				GameIO.printBoard(board);
 				board.setPlayerTurn(true);
 			}
 			
@@ -90,7 +89,7 @@ public class GameMaster
 			System.out.println("\nThe AI has won! Better luck next time.");
 		} else 
 		{
-			System.out.println("I don't know how you even got to this state sooooo... sorry?");
+			System.out.println("It's a tie!");
 		}
 	}
 	
